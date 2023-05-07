@@ -71,7 +71,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'icef_forum',
         'USER': 'icef_user',
-        'PASSWORD': '8802icef',
+        'PASSWORD': str(os.getenv('PSQL_PASSWORD')),
         'HOST': 'localhost',
         'PORT': '',
     }
