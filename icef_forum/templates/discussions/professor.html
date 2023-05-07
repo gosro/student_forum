@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}
+  {{professor.title}}
+{% endblock title %}
+{% block content %}
+
+<div class="container py-5">
+<div class="card" style="width: 70rem;">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        {% if  professor.image%}
+        <img src={{professor.image.url}} class="card-img" alt="...">
+        {% endif %}
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{professor.title}}</h5>
+          <p class="card-text">{{professor.description|linebreaks}}</p>
+          <p class="card-text">Курсы:
+          {% for course in courses %}
+          <a href="{% url 'discussions:course' course.slug %}">{{course.title}}</a>,
+          {% endfor %}
+        </p>
+          {% if approve %}
+          <a
+          class="btn btn-lg btn-primary"
+          href="{% url 'discussions:professor_approve' professor.slug %}" role="button"
+          >
+          Одобрить профессора
+          </a>
+          {% elif user.is_authenticated %}
+          <p>Вы одобрили преподавателя!</p>
+          <a
+          class="btn btn-lg btn-primary"
+          href="{% url 'discussions:professor_disapprove' professor.slug %}" role="button"
+          >
+          Отменить одобрение
+          </a>
+          {% endif %}
+          <p>{{professor.title}} is approved by {{professor.approved.count}} users</p>
+          
+      
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href="{% url 'discussions:professors_list' %}">
+    Полный список преподавателей
+  </a>
+  
+</div>
+{% if user.is_authenticated %}
+<div class="card" style="width: 70rem;">
+  <h5 class="card-header">Поделитесь мнением и рекомендациями:</h5>
+  <div class="card-body">
+    <form method="post" action="{% url 'discussions:professor_write' professor.slug %}">
+      {% csrf_token %}      
+      <div class="form-group mb-2">
+        <label for="{{ form.title.id_for_label }}">
+          {{ form.title.label }}
+        </label>
+        <p>{{form.title}}</p>
+        <label for="{{ form.text.id_for_label }}">
+          {{ form.text.label }}
+        </label>
+        <p>{{form.text}}</p>
+        <input type="hidden" name="professor" value={{ professor.id}}>
+      </div>
+      <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% for post in page_obj %}
+<article style="padding:7px">
+  <div class="card" style="width: 70rem;">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted">
+          Автор: {{post.author}}
+        </h6>
+        <p>{{post.pub_date|date:"d E Y"}} at {{ post.pub_date|time:"H:i" }}</p>
+        <p class="card-text">{{post.text|linebreaks}}</p>
+        <h5 class="card-title">Средний рейтинг поста:
+          <span class="fa fa-star {% if post.average_rating > 0 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 1 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 2 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 3 %} checked {% endif %}" ></span>
+          <span class="fa fa-star {% if post.average_rating > 4 %} checked {% endif %}"></span>
+           {{post.average_rating}}/5 ({{post.ratings.count}} голосов)
+      </h5>
+      <p>Оцените пост:</p>
+      <form method="post" action="{% url 'discussions:post_rate' post.id %}">
+        {% csrf_token %}
+        {{rating_form.rating}}
+        <button type="submit" class="btn btn-primary">оценить</button>
+      </form>
+        {% if post.professor %}   
+          <a href="#" class="card-link">
+            Обсуждение преподавателя: {{post.professor.title}}
+          </a>
+        {% endif %}
+        {% if post.course %}   
+          <a href="#" class="card-link">
+            Обсуждение курса: {{post.course.title}}
+          </a>
+        {% endif %}
+        {% if post.job %}   
+          <a href="#" class="card-link">
+            Обсудить карьеру в {{post.job.title}}
+          </a>
+        {% endif %}
+        <a href="{% url 'discussions:post_detail' post.id%}" class="card-link">Обсуждение поста</a>
+      </div>
+    </div>
+</article>
+{% endfor %}
+
+{% include 'includes/paginator.html' %}
+{% endblock %}

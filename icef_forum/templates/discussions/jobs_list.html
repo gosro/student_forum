@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}
+Job list
+{% endblock title %}
+{% block content %}
+<h1>Список профессий.</h1>
+<p class="mytextclass">
+  На сайте можно обсудить работу в конкретной сфере, а также выкладывать и смотреть вакансии
+  по каждой из профессии в отдельности.
+</p>
+{% for job in page_obj %}
+<div class="container py-3">
+<div class="card" style="width: 70rem;">
+    <div class="row no-gutters">
+        <div class="card-body">
+          <h5 style="font-size: 30px" class="card-title">{{job.title}}</h5>
+          <p class="card-text" style="font-size: 17px">{{job.discription|linebreaks}}</p>
+          <a href="{% url 'discussions:job' job.slug %}" class="card-link">
+            Обсуждение профессии
+          </a>
+          <a href="{% url 'discussions:job_vacancies' job.slug %}" class="card-link">
+            Вакансии в этой сфере
+          </a>
+    </div>
+</div>
+</div>
+</div>
+{% endfor %}
+{% include 'includes/paginator.html' %}
+{% endblock %}

@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html> <!-- Используется html 5 версии -->
+<html lang="ru"> <!-- Язык сайта - русский -->
+<head>    
+  <meta charset="utf-8"> <!-- Кодировка сайта -->
+  <!-- Сайт готов работать с мобильными устройствами -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Загружаем фав-иконки -->
+  <!-- <link rel="icon" href="img/fav/fav.ico" type="image">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">-->
+  <meta name="msapplication-TileColor" content="#000">
+  <meta name="theme-color" content="#ffffff">
+  <!-- Подключен файл со стандартными стилями бустрап -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+  <link rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    .mytextclass {
+      font-size: 20px
+    }
+    .checked {
+      color: orange;
+    }
+  
+    .dropbtn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 16px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+  
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+  
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+  
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+  
+    .dropdown-content a:hover {background-color: #f1f1f1}
+  
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  
+    .dropdown:hover .dropbtn {
+      background-color: #3e8e41;
+    }
+      
+  </style>
+  <title>
+    {%block title%}
+    {% endblock %}
+  </title>
+</head>
+<body>
+  {% include 'includes/header.html' %}
+  <main>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+  </main>
+</body>
+</html>

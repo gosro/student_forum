@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}
+ICEF FORUM
+{% endblock title %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+  <div class="col-9">
+    <div class="container py-5">
+      <h1 style="font-size:50px">Welcome to ICEF student forum</h1>
+      <p class="mytextclass">
+        Внутри сплоченного колектива студенов МИЭФ часто возникают вопросы и обсуждения
+        касательно выбора курсов, преподавателей и профессии: создается необходимость делиться
+        опытом, давать рекомендации, публично или анонимно высказывать свое мнение для принятия
+        общих решений или по другим причинам. Также студенты нуждаются как в поиске работы, так и
+        в найме сотрудников со своего факультета. Для решения этих задач создан этот небольшой форум</p><br>
+      <p class="mytextclass">
+        Здесь каждый может делать следующее:
+      </p>
+      <ul class="mytextclass">
+        <li>Писать посты под дискуссию: преподавателя, курс.</li>
+        <li>Выкладывать свои вакансии и видеть чужие</li>
+        <li>Коментировать и оценивать посты</li>
+        <li>Оценивать курсы и преподавателей</li>
+        <li>Участвовать в открытых голосованиях</li>
+      </ul>
+      <p class="mytextclass">
+        За символическую сумму можно разместить рекламу справа в колонке или снизу в виде поста.
+      </p>
+      <h2>Последние посты:</h2>
+      {% for post in post_list %}
+
+
+      <article style="padding:7px">
+        <div class="card" style="width: 55rem;">
+            <div class="card-body">
+              <h5 class="card-title">
+                {% if post.professor %}
+                Тема: {{post.professor.title}}
+                {% endif %}
+                {% if post.course %}
+                Тема: {{post.course.title}}
+                {% endif %}
+                {% if post.job %}
+                Тема: {{post.job.title}}
+                {% endif %}
+              </h5>
+              <h6 class="card-subtitle mb-2 text-muted">
+                Автор: {{post.author}}
+              </h6>
+              <p class="card-title">Средний рейтинг поста:
+                <span class="fa fa-star {% if post.average_rating > 0 %} checked {% endif %}"></span>
+                <span class="fa fa-star {% if post.average_rating > 1 %} checked {% endif %}"></span>
+                <span class="fa fa-star {% if post.average_rating > 2 %} checked {% endif %}"></span>
+                <span class="fa fa-star {% if post.average_rating > 3 %} checked {% endif %}" ></span>
+                <span class="fa fa-star {% if post.average_rating > 4 %} checked {% endif %}"></span>
+                 {{post.average_rating}}/5 ({{post.ratings.count}} голосов)
+              </p>
+              {% if user.is_authenticated %}
+              <p>Оцените пост:</p>
+                  <form method="post" action="{% url 'discussions:post_rate' post.id %}">
+                    {% csrf_token %}
+                    {{rating_form.rating}}
+                    <button type="submit" class="btn btn-primary">оценить</button>
+                  </form>
+              {% endif %}
+              <p class="card-text">{{post.text|linebreaks}}</p>
+              {% if post.professor %}   
+                <a href="{% url 'discussions:professor' post.professor.slug %}" class="card-link">
+                  Обсуждение преподавателя: {{post.professor.title}}
+                </a>
+              {% endif %}
+              {% if post.course %}   
+                <a href="{% url 'discussions:course' post.course.slug %}" class="card-link">
+                  Обсуждение курса: {{post.course.title}}
+                </a>
+              {% endif %}
+              {% if post.job %}   
+                <a href="{% url 'discussions:job' post.job.slug %}" class="card-link">
+                  Обсудить карьеру в {{post.job.title}}
+                </a>
+              {% endif %}
+              <a href="{% url 'discussions:post_detail' post.id%}" class="card-link">Обсуждение поста</a>
+            </div>
+          </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-3" style="#">
+
+    <div class="card" style="width: 18rem;margin-top:40px;">
+      <h5 style="text-align: center ">Свежая вакансия</h5>
+      <img class="card-img-top" src="static/img/banker.jpg" alt="Card image cap">
+      <h6 style="text-align: center ">{{vacancy.title}}</h6>
+      <p>{{vacancy.text|slice:":100"|linebreaks}}...
+        <a href="{% url 'discussions:vacancy_list'%}">подробнее</a>
+      </p>
+    </div>
+
+
+    <div class="card" style="width: 18rem;margin-top:40px;">
+    <h5 style="text-align: center ">Самые обсуждаемые преподаватели</h5>
+    <img class="card-img-top" src="static/img/professor.jpg" alt="Card image cap">
+    <div class="card-body" style="text-align: center ">
+    {% for professor in most_discussed_professors %}
+    <a href="{% url 'discussions:professor' professor.slug %}" style="text-align: center ">
+      {{professor.title}}: {{professor.posts.count}} posts
+    </a><br>
+    {% endfor %}
+    <hr>
+    <a href="{% url 'discussions:professors_rating' "postnum" %}">Весь рейтинг</a>
+  </div>
+  </div>
+  <div class="col-3" style="#">
+    <div class="card" style="width: 18rem;margin-top:40px;">
+    <h5 style="text-align: center ">Самые одобряемые преподаватели</h5>
+    <img class="card-img-top" src="static/img/teachers_talking.JPG" alt="Card image cap">
+    <div class="card-body" style="text-align: center ">
+    {% for professor in most_approved_professors %}
+    <a href="#" style="text-align: center ">
+      {{professor.title}}: {{professor.num_approvals}} approvals
+    </a><br>
+    {% endfor %}
+    <hr>
+    <a href="{% url 'discussions:professors_rating' "approvalsnum" %}">Весь рейтинг</a>
+  </div>
+
+
+  </div>
+  </div>
+
+</div>
+{% endblock %}

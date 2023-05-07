@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load user_filters %}
+{% block title %}
+  Post {{post.text|slice:":30" }}
+{% endblock %}
+{% block content %}
+<div class="container py-5">
+<div class="row">
+<aside class="col-12 col-md-3">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        Publication Date: {{post.pub_date|date:"d E Y"}}
+      </li>
+      <li class="list-group-item">
+        {% if post.professor %}
+        Пост на тему: обсуждение преподавателя {{post.professor}}
+        <a href="{% url 'discussions:professor' post.professor.slug %}">
+            все посты на эту тему
+          </a>
+        {% endif %}
+        {% if post.course %}
+        Пост на тему: обсуждение курса {{post.course}}
+        <a href="{% url 'discussions:course' post.course.slug %}">
+            все посты на эту тему
+          </a>
+        {% endif %}
+        {% if post.job %}
+        Пост на тему: обсуждение профессии {{post.job}}
+        <a href="{% url 'discussions:job' post.job.slug %}">
+            все посты на эту тему
+          </a>
+        {% endif %}
+
+      </li>
+      <li class="list-group-item">
+        Автор: {{post.author}}
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Total posts:  <span >{{post.author.posts.count}}</span>
+      </li>
+      <li class="list-group-item">
+        <a href="">
+          All posts of the user
+        </a>
+      </li>
+    </ul>
+</aside>
+<article class="col-12 col-md-9">
+  <p>
+   {{post.text}}
+  </p><br>
+  <p class="card-title">Средний рейтинг поста:
+    <span class="fa fa-star {% if post.average_rating > 0 %} checked {% endif %}"></span>
+    <span class="fa fa-star {% if post.average_rating > 1 %} checked {% endif %}"></span>
+    <span class="fa fa-star {% if post.average_rating > 2 %} checked {% endif %}"></span>
+    <span class="fa fa-star {% if post.average_rating > 3 %} checked {% endif %}" ></span>
+    <span class="fa fa-star {% if post.average_rating > 4 %} checked {% endif %}"></span>
+     {{post.average_rating}}/5 ({{post.ratings.count}} голосов)
+  </p>
+  {% if user.is_authenticated %}
+  <p>Оцените пост:</p>
+      <form method="post" action="{% url 'discussions:post_rate' post.id %}">
+        {% csrf_token %}
+        {{rating_form.rating}}
+        <button type="submit" class="btn btn-primary">оценить</button>
+      </form>
+  {% endif %}
+  {% if user.is_authenticated %}
+  <div class="card my-4">
+    <h5 class="card-header">Add comment:</h5>
+    <div class="card-body">
+      <form method="post" action="{% url 'discussions:add_comment' post.id%}">
+        {% csrf_token %}      
+        <div class="form-group mb-2">
+          {{ form.text|addclass:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+    </div>
+  </div>
+{% endif %}
+
+{% for comment in comments %}
+  <div class="media mb-4">
+    <div class="media-body">
+      <h5 class="mt-0">
+        <a href="#">
+          {{ comment.author.username }}
+        </a>
+      </h5>
+      <p>
+        {{ comment.text }}
+      </p>
+    </div>
+  </div>
+{% endfor %} 
+</article>
+
+
+</aside>
+</div>
+</div>
+{% endblock %}

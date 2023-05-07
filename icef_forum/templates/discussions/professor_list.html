@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}
+Professor list
+{% endblock title %}
+{% block content %}
+<h1>Список преподавателей МИЭФ</h1>
+<p class="mytextclass">
+  Ниже представлен полный список преподавателей. У каждого преподавателя
+есть профиль, где можно напсиать пост. Также преподавателей можно одобрять и оценивать(
+  авторизированным пользователям).</p>
+  <p>Professor search:</p>
+  <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" action="{% url 'discussions:professors_search' %}" method="get">
+    <input name="q" type="text" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+  </form>
+{% for professor in page_obj %}
+<div class="container py-3">
+<div class="card" style="width: 70rem;">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        {% if  professor.image%}
+        <img src={{professor.image.url}} class="card-img" alt="...">
+        {% endif %}
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{professor.title}}</h5>
+          <p class="card-text">{{professor.description|linebreaks}}</p>
+          
+          <p>{{professor.title}} is approved by {{professor.approved.count}} users</p>
+          <a href="{% url 'discussions:professor' professor.slug %}" class="card-link">
+            Обсудить преподавателя в его профиле
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% include 'includes/paginator.html' %}
+{% endblock %}

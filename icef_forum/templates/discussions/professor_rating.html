@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}
+Professor list
+{% endblock title %}
+{% block content %}
+<h1>Рейтинг преподавателей по параметру: "<b>{{rating_parameter}}</b>"</h1>
+<p class="mytextclass">
+  Любой рейтинг на нашем форуме - результат действий авторизированных пользователей.
+  Прошу принимать это во внимание и грамотно делать выводы.
+</p>
+
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Преподаватель</th>
+        <th scope="col">Количество постов</th>
+        <th scope="col">Количество одобрений</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for professor in professor_list %}
+
+        <tr>
+            {% if rating_parameter == 'количество постов' %}
+            <td><a href="{% url 'discussions:professor' professor.slug %}">{{ professor.title }}</a></td>
+            <td>{{ professor.num_posts }}</td>
+            <td>{{ professor.approved.count }}</td>
+            {% elif rating_parameter == "количество одобрений"%}
+            <td><a href="{% url 'discussions:professor' professor.slug %}">{{ professor.title }}</a></td>
+            <td>{{ professor.posts.count }}</td>
+            <td>{{ professor.num_approvals }}</td>
+            {% endif %}
+        </tr>
+
+{% endfor %}
+
+    </tbody>
+  </table>
+
+
+
+{% endblock %}

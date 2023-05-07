@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}
+Vacancy list
+{% endblock title %}
+{% block content %}
+<h1>Список вакансий.</h1>
+<p class="mytextclass">
+  Ниже представлен список вакансий, которые могут быть актуальны студентам МИЭФ.
+</p>
+{% for vacancy in page_obj %}
+<div class="container py-3">
+<div class="card" style="width: 70rem;">
+    <div class="row no-gutters">
+        <div class="card-body">
+          <h5 style="font-size: 30px" class="card-title">{{vacancy.title}}</h5>
+          <p class="card-text" style="font-size: 17px">{{vacancy.text|linebreaks}}</p>
+          <a href="{{vacancy.link}}">Ссылка на вакансию</a>
+          
+    </div>
+    <p style="font-style: italic; color:gray">Posted by {{vacancy.author}}</p>
+    {% if vacancy.job %}
+    <a href="{% url 'discussions:job_vacancies' vacancy.job.slug %}" style="font-style: italic; color:gray">
+        Вакансии только в сфере {{vacancy.job.title}}
+    </a>
+    {% endif %}
+</div>
+</div>
+</div>
+{% endfor %}
+{% include 'includes/paginator.html' %}
+{% endblock %}

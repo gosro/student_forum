@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}
+Search results
+{% endblock title %}
+{% block content %}
+<h1>Результаты поиска</h1>
+{% for post in object_list %}
+<div class="container py-3">
+<div class="card" style="width: 70rem;">
+    <div class="row no-gutters">
+        <div class="card-body">
+          <h5 style="font-size: 30px" class="card-title">{{post.title}}</h5>
+          <p class="card-text" style="font-size: 17px">{{post.text|linebreaks}}</p>
+          <a href="{% url 'discussions:post_detail' post.id%}" class="card-link">Обсуждение поста</a>
+    </div>
+</div>
+</div>
+</div>
+{% endfor %}
+{% include 'includes/paginator.html' %}
+{% endblock %}

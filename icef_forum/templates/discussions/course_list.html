@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}
+Professor list
+{% endblock title %}
+{% block content %}
+<h1>Список курсов МИЭФ</h1>
+<p class="mytextclass">
+  Ниже представлен полный список курсов. У каждого курса
+есть профиль, где можно напсиать пост</p>
+<p>Course search:</p>
+  <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" action="{% url 'discussions:courses_search' %}" method="get">
+    <input name="q" type="text" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+  </form>
+{% for course in page_obj %}
+<div class="container py-3">
+<div class="card" style="width: 70rem;">
+    <div class="row no-gutters">
+        <div class="card-body">
+          <h5 class="card-title">{{course.title}}</h5>
+          <p class="card-text">{{course.description|linebreaks}}</p>
+          <a href="{% url 'discussions:course' course.slug %}" class="card-link">
+            Обсудить курс в профиле
+          </a>
+    </div>
+</div>
+</div>
+</div>
+{% endfor %}
+{% include 'includes/paginator.html' %}
+{% endblock %}

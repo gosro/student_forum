@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}
+  {{course.title}}
+{% endblock title %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="card" style="width: 70rem;">
+        <div class="row no-gutters">
+            <div class="card-body">
+              <h5 class="card-title">{{course.title}}</h5>
+              <p class="card-text">{{course.description}}</p>
+              <p class="card-text">Преподаватели:
+                {% for professor in professors %}
+                <a href="{% url 'discussions:professor' professor.slug %}">{{professor.title}}</a>,
+                {% endfor %}
+              </p>
+    
+          </div>
+        </div>
+      </div>
+      <a href="{% url 'discussions:courses_list' %}">
+        Полный список курсов
+      </a>
+    </div>
+
+
+{% if user.is_authenticated %}
+<div class="card" style="width: 70rem;">
+  <h5 class="card-header">Поделитесь мнением и рекомендациями:</h5>
+  <div class="card-body">
+    <form method="post" action="{% url 'discussions:course_write' course.slug %}">
+      {% csrf_token %}      
+      <div class="form-group mb-2">
+        <label for="{{ form.title.id_for_label }}">
+          {{ form.title.label }}
+        </label>
+        <p>{{form.title}}</p>
+        <label for="{{ form.text.id_for_label }}">
+          {{ form.text.label }}
+        </label>
+        <p>{{form.text}}</p>
+        <input type="hidden" name="course" value={{ course.id}}>
+      </div>
+      <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% for post in page_obj %}
+<article style="padding:7px">
+  <div class="card" style="width: 70rem;">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted">
+          Автор: {{post.author}}
+        </h6>
+        <p>{{post.pub_date|date:"d E Y"}} at {{ post.pub_date|time:"H:i" }}</p>
+        <p class="card-text">{{post.text|linebreaks}}</p>
+        <h5 class="card-title">Средний рейтинг поста:
+          <span class="fa fa-star {% if post.average_rating > 0 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 1 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 2 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 3 %} checked {% endif %}" ></span>
+          <span class="fa fa-star {% if post.average_rating > 4 %} checked {% endif %}"></span>
+           {{post.average_rating}}/5 ({{post.ratings.count}} голосов)
+      </h5>
+      {% if user.is_authenticated %}
+      <p>Оцените пост:</p>
+      <form method="post" action="{% url 'discussions:post_rate' post.id %}">
+        {% csrf_token %}
+        {{rating_form.rating}}
+        <button type="submit" class="btn btn-primary">оценить</button>
+      </form>
+      {% endif %}
+        {% if post.professor %}   
+          <a href="#" class="card-link">
+            Обсуждение преподавателя: {{post.professor.title}}
+          </a>
+        {% endif %}
+        {% if post.course %}   
+          <a href="#" class="card-link">
+            Обсуждение курса: {{post.course.title}}
+          </a>
+        {% endif %}
+        {% if post.job %}   
+          <a href="#" class="card-link">
+            Обсудить карьеру в {{post.job.title}}
+          </a>
+        {% endif %}
+        <a href="{% url 'discussions:post_detail' post.id%}" class="card-link">Обсуждение поста</a>
+      </div>
+    </div>
+</article>
+{% endfor %}
+
+{% include 'includes/paginator.html' %}
+{% endblock %}

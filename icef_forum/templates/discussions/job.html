@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}
+  {{job.title}}
+{% endblock title %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="card" style="width: 70rem;">
+        <div class="row no-gutters">
+            <div class="card-body">
+              <h5 class="card-title">{{job.title}}</h5>
+              <p class="card-text">{{job.description}}</p>
+            
+          </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-2">
+<ul class="nav nav-pills">
+    <li class="nav-item"> 
+        <a class="nav-link {% if request.resolver_match.view_name == 'discussions:job' %}active{% endif %}" 
+        style="color: #000000; {% if request.resolver_match.view_name == 'discussions:job' %}background-color:#C0C0C0{% endif %}"
+        href="{% url 'discussions:job' job.slug %}">Посты</a>
+      </li>
+      <li class="nav-item" {% if request.resolver_match.view_name == 'discussions:job_vacancies' %}active{% endif %}>
+        <a class="nav-link" 
+        style="color: #000000; {% if request.resolver_match.view_name == 'discussions:job_vacancies' %}background-color:#C0C0C0{% endif %}"
+        href="{% url 'discussions:job_vacancies' job.slug %}">Вакансии</a>
+      </li>
+</ul>
+</div>
+
+{% if request.resolver_match.view_name == 'discussions:job' %}
+{% if user.is_authenticated %}
+<div class="card" style="width: 70rem;">
+  <h5 class="card-header">Поделитесь мнением и рекомендациями:</h5>
+  <div class="card-body">
+    <form method="post" action="{% url 'discussions:job_write' job.slug %}">
+      {% csrf_token %}      
+      <div class="form-group mb-2">
+        <label for="{{ form.title.id_for_label }}">
+          {{ form.title.label }}
+        </label>
+        <p>{{form.title}}</p>
+        <label for="{{ form.text.id_for_label }}">
+          {{ form.text.label }}
+        </label>
+        <p>{{form.text}}</p>
+        <input type="hidden" name="job" value={{job.id}}>
+      </div>
+      <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% for post in page_obj %}
+<article style="padding:7px">
+  <div class="card" style="width: 70rem;">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted">
+          Автор: {{post.author}}
+        </h6>
+        <p>{{post.pub_date|date:"d E Y"}} at {{ post.pub_date|time:"H:i" }}</p>
+        <p class="card-text">{{post.text|linebreaks}}</p>
+        <h5 class="card-title">Средний рейтинг поста:
+          <span class="fa fa-star {% if post.average_rating > 0 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 1 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 2 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if post.average_rating > 3 %} checked {% endif %}" ></span>
+          <span class="fa fa-star {% if post.average_rating > 4 %} checked {% endif %}"></span>
+           {{post.average_rating}}/5 ({{post.ratings.count}} голосов)
+      </h5>
+      {% if user.is_authenticated %}
+      <p>Оцените пост:</p>
+      <form method="post" action="{% url 'discussions:post_rate' post.id %}">
+        {% csrf_token %}
+        {{rating_form.rating}}
+        <button type="submit" class="btn btn-primary">оценить</button>
+      </form>
+      {% endif %}
+        {% if post.professor %}   
+          <a href="#" class="card-link">
+            Обсуждение преподавателя: {{post.professor.title}}
+          </a>
+        {% endif %}
+        {% if post.course %}   
+          <a href="#" class="card-link">
+            Обсуждение курса: {{post.course.title}}
+          </a>
+        {% endif %}
+        {% if post.job %}   
+          <a href="#" class="card-link">
+            Обсудить карьеру в {{post.job.title}}
+          </a>
+        {% endif %}
+        <a href="{% url 'discussions:post_detail' post.id%}" class="card-link">Обсуждение поста</a>
+      </div>
+    </div>
+</article>
+{% endfor %}
+{% endif %}
+
+{% if request.resolver_match.view_name == 'discussions:job_vacancies' %}
+{% for vacancy in page_obj %}
+<div class="container py-3">
+<div class="card" style="width: 70rem;">
+    <div class="row no-gutters">
+        <div class="card-body">
+          <h5 style="font-size: 30px" class="card-title">{{vacancy.title}}</h5>
+          <p class="card-text" style="font-size: 17px">{{vacancy.text|linebreaks}}</p>
+          <a href="{{vacancy.link}}">Ссылка на вакансию</a>
+          
+    </div>
+    <p style="font-style: italic; color:gray">Posted by {{ancy.author}}</p>
+</div>
+</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% include 'includes/paginator.html' %}
+{% endblock %}

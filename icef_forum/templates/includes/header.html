@@ -1,0 +1,56 @@
+{% load static %}
+<header class="p-3 bg-dark text-white">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+      <div>
+      <a href="{% url 'discussions:index' %}" style="color: yellow; font: cursive">
+        <img src="{% static 'img/pound.jpg' %}" 
+          alt="" 
+          style="height:40px;width:40px;margin-right:7px" 
+          class="rounded">
+        <span style="color: white;">ICEF</span>
+        FORUM
+      </a>
+    </div>
+
+      <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="{% url 'discussions:index' %}" class="nav-link px-2 text-secondary">Home</a></li>
+        <li><div class="dropdown">
+          <button class="nav-link px-2 text-secondary text-white">Discussions</button>
+          <div class="dropdown-content">
+            <a href="{% url 'discussions:professors_list' %}">Professors</a>
+            <a href="{% url 'discussions:courses_list' %}">Courses</a>
+            <a href="{% url 'discussions:jobs_list' %}">Jobs</a>
+          </div>
+        </div></li>
+        <li><div class="dropdown">
+          <button class="nav-link px-2 text-secondary text-white">Ratings</button>
+          <div class="dropdown-content">
+            <a href="{% url 'discussions:professors_rating' 'approvalsnum' %}">Most Discussed Posts</a>
+            <a href="{% url 'discussions:professors_rating' 'postnum' %}">Most Discussed Professors</a>
+            <a href="{% url 'discussions:professors_rating' 'approvalsnum' %}">Most Approved Professors</a>
+          </div></li>
+        <li><div class="dropdown">
+          <button class="nav-link px-2 text-secondary text-white">Vacancies</button>
+          <div class="dropdown-content">
+            <a href="{% url 'discussions:vacancy_list' %}">All Vacancies</a>
+            <a href="{% url 'discussions:create_vacancy' %}">Publish Vacancy</a>
+          </div></li>
+        <li><a href="#" class="nav-link px-2 text-white">About</a></li>
+      </ul>
+
+      <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" action="{% url 'discussions:search_results' %}" method="get">
+        <input name="q" type="text" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+      </form>
+
+      <div class="text-end">
+        {% if user.is_authenticated %}
+        <a href="{% url 'users:logout' %}" type="button" class="btn btn-outline-light me-2">Log out</a>
+        {% else %}
+        <a href="{% url 'users:login' %}" type="button" class="btn btn-outline-light me-2">Login</a>
+        <a href="{% url 'users:signup' %}" type="button" class="btn btn-warning">Sign-up</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</header>
