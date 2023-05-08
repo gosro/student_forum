@@ -9,7 +9,7 @@ Student forum written on Django
   - Install OS components for running Postgres
   ```
   sudo apt update
-  sudo apt install python3-pip python3-dev libpq-dev postgresql postgresql-contrib
+  sudo apt install python3-pip python3-dev libpq-dev postgresql postgresql-contrib build-essential
   ```
   - Create superuser and tables in the db:
   ```
